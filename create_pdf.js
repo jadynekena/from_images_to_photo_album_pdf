@@ -9,7 +9,7 @@ const PAGE_HEIGHT = 800
 const PAGE_MARGIN = 40
 const ROUNDED_CORNER = 30
 
-const CURRENT_YEAR = '2017'
+const CURRENT_YEAR = '2018'
 const IMAGE_TEST = 'E:\\ALBUMS\\2017\\Screenshot_20170712-165439.png'
 const IMG_REFERENCE = IMAGE_TEST.split('\\').at(-1)
 
@@ -56,6 +56,8 @@ async function album_annee(year){
 	//open the folder
 	readdir(dir, function (err, data){
 
+		if(data.length === 0) return console.log('No files found.')
+
 		//get all files paths
 		const paths = data.map(e => dir + '/' + e)
 
@@ -90,6 +92,8 @@ async function album_annee(year){
 					if(real_path_target.includes(IMG_REFERENCE)){
 						console.log({one_file})
 					}
+
+					if(final_photos.length === 0) return console.log('No `.lnk` files found.')
 
 					if(final_photos.length >= paths.length){
 						console.log('>>>>>>>>>>>>>>>>>>> LAST HERE')						
