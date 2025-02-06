@@ -1,3 +1,6 @@
+# Results
+![demo](./demo.gif)
+
 # How to install it
 Just clone the repo, run `npm install` and you're ready to go !
 
@@ -18,6 +21,9 @@ Everything is in `create_pdf.js`, and it works with node.
 
 # What you will need to change
 You can change all global variables on top of the code, as much as you want.
+
+# Limitation
+It only supports `png` and `jpg` files (using `.lnk` windows shortcuts).
 
 # Dependencies
 - `node`
