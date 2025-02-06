@@ -1,4 +1,4 @@
-import { readdir, readFileSync, writeFileSync, statSync, appendFile } from 'node:fs';
+import { readdir, readFileSync, writeFileSync, statSync } from 'node:fs';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import ws  from 'windows-shortcuts';
 import sharp from 'sharp';
@@ -114,14 +114,12 @@ async function album_annee(year){
 										await append_a_new_image(year, pdfDoc, one_file['path'], one_file['date'], current_page, PAGE_MARGIN)	
 									}catch(error){
 										console.error({error})
-										appendFile('errors_'+year+'.txt', JSON.stringify({new_i, one_file, error}, null, 2));
 									}
 								}else{
 									try{
 										current_page = await append_a_new_image(year, pdfDoc, one_file['path'], one_file['date'])		
 									}catch(error){
 										console.error({error})
-										appendFile('errors_'+year+'.txt', JSON.stringify({new_i, one_file, error}, null, 2));
 									}
 									
 								}
