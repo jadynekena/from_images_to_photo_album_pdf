@@ -9,10 +9,9 @@ const PAGE_HEIGHT = 800
 const PAGE_MARGIN = 40
 const ROUNDED_CORNER = 30
 
-const CURRENT_YEAR = '2014'
+const CURRENT_YEAR = '2017'
 const IMAGE_TEST = 'E:\\ALBUMS\\2017\\Screenshot_20170712-165439.png'
-
-const reference = IMAGE_TEST.split('\\').at(-1)
+const IMG_REFERENCE = IMAGE_TEST.split('\\').at(-1)
 
 //test()
 //test2()
@@ -30,7 +29,6 @@ async function test(){
 		  .then(data => console.log('Processed'))
 		  .catch(err => console.error('Error:', err));
 
-	return 
 	await append_a_new_image(year, pdfDoc, IMAGE_TEST)	
 	await save_pdf(pdfDoc, year)
 
@@ -77,7 +75,7 @@ async function album_annee(year){
 
 					//get birthdate of the image
 					const final_date = await get_oldest_date(real_path_target)
-					if(real_path_target.includes(reference)){
+					if(real_path_target.includes(IMG_REFERENCE)){
 						console.log('\n\n\n\n',{real_path_target})
 						console.log({final_date})
 						console.log('\n\n\n\n')
@@ -89,7 +87,7 @@ async function album_annee(year){
 
 				  	final_photos.push(one_file)
 
-					if(real_path_target.includes(reference)){
+					if(real_path_target.includes(IMG_REFERENCE)){
 						console.log({one_file})
 					}
 
@@ -317,7 +315,7 @@ function get_final_image_dimensions(image_path, image_size){
 	let height = image_size.height
 	let scale_factor = 1
 
-	if(image_path.includes(reference)) console.log('before', { width, height } )
+	if(image_path.includes(IMG_REFERENCE)) console.log('before', { width, height } )
 
 	//make height fit to PAGE_HEIGHT/2, and change width accordingly (to keep the right scale)
 	if(height > ((PAGE_HEIGHT - (PAGE_MARGIN*3))/2)){
@@ -326,7 +324,7 @@ function get_final_image_dimensions(image_path, image_size){
 
 	width = Number((width * scale_factor).toFixed(0))
 	height = Number((height * scale_factor).toFixed(0))
-	if(image_path.includes(reference)) console.log('after', { width, height } )
+	if(image_path.includes(IMG_REFERENCE)) console.log('after', { width, height } )
 
 	return { width , height } 
 }

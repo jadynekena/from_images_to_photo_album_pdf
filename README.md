@@ -1,5 +1,5 @@
 # How to install it
-Just clone the repo !
+Just clone the repo, run `npm install` and you're ready to go !
 
 # Why from images to a pdf
 We all have **A LOT of images** on our (windows) PC. In my case, I wanted to print out my **best memories of each year**, so I thought it would be nice to share the code to automate it.   
