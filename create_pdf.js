@@ -4,14 +4,20 @@ import ws  from 'windows-shortcuts';
 import sharp from 'sharp';
 import ExifReader from 'exifreader';
 
+
+/************************************* BEGINING OF GLOBAL VARIABLES ***********************************/
+
 const PAGE_WIDTH = 600
 const PAGE_HEIGHT = 800
 const PAGE_MARGIN = 40
 const ROUNDED_CORNER = 15
 
-const CURRENT_YEAR = '2018'
+const CURRENT_YEAR = '2014'
 const IMAGE_TEST = 'E:\\ALBUMS\\2017\\IMG_20170919_104225.jpg'
-const IMG_REFERENCE = IMAGE_TEST.split('\\').at(-1)
+const IMG_REFERENCE = IMAGE_TEST.split('\\').at(-1) // DON'T CHANGE THIS
+
+
+/************************************* END OF GLOBAL VARIABLES ***********************************/
 
 //test()
 //test2()
@@ -42,11 +48,7 @@ async function test2(){
 
 
 async function main(){
-	album_annee('2014')
-	album_annee('2015')
-	album_annee('2016')
-	album_annee('2017')
-	album_annee('2018')
+	album_annee(CURRENT_YEAR)
 }
 
 async function album_annee(year){
@@ -352,6 +354,7 @@ async function processImage(imagePath, width, height) {
             .rotate() // Corrects the orientation based on EXIF data
             .resize({ width, height }) // Resize the image
             .toFormat('png')
+            .png({ compressionLevel: 1 }) // Adjust compression for PNG
             .composite([{
 			    input: mask,
 			    blend: blend
