@@ -7,10 +7,10 @@ import ExifReader from 'exifreader';
 const PAGE_WIDTH = 600
 const PAGE_HEIGHT = 800
 const PAGE_MARGIN = 40
-const ROUNDED_CORNER = 30
+const ROUNDED_CORNER = 15
 
 const CURRENT_YEAR = '2018'
-const IMAGE_TEST = 'E:\\ALBUMS\\2017\\Screenshot_20170712-165439.png'
+const IMAGE_TEST = 'E:\\ALBUMS\\2017\\IMG_20170919_104225.jpg'
 const IMG_REFERENCE = IMAGE_TEST.split('\\').at(-1)
 
 //test()
@@ -20,7 +20,7 @@ main()
 async function test(){
 
 	const year = CURRENT_YEAR
-	const pdfDoc = await init_pdf(year)	
+	const pdfDoc = await init_pdf('test')	
 
 	sharp(IMAGE_TEST)
 		  .png()
@@ -29,8 +29,8 @@ async function test(){
 		  .then(data => console.log('Processed'))
 		  .catch(err => console.error('Error:', err));
 
-	await append_a_new_image(year, pdfDoc, IMAGE_TEST)	
-	await save_pdf(pdfDoc, year)
+	await append_a_new_image(pdfDoc, IMAGE_TEST, 'ceci est un test')	
+	await save_pdf(pdfDoc, 'TEST')
 
 }
 
@@ -42,7 +42,11 @@ async function test2(){
 
 
 async function main(){
-	album_annee(CURRENT_YEAR)
+	album_annee('2014')
+	album_annee('2015')
+	album_annee('2016')
+	album_annee('2017')
+	album_annee('2018')
 }
 
 async function album_annee(year){
@@ -115,13 +119,13 @@ async function album_annee(year){
 								// each time new_i is odd, (1, 3, 5, ...) => use same page as before
 								if(oddOrEven(new_i) === 'odd'){
 									try{
-										await append_a_new_image(year, pdfDoc, one_file['path'], one_file['date'], current_page, PAGE_MARGIN)	
+										await append_a_new_image(pdfDoc, one_file['path'], one_file['date'], current_page, PAGE_MARGIN)	
 									}catch(error){
 										console.error({error})
 									}
 								}else{
 									try{
-										current_page = await append_a_new_image(year, pdfDoc, one_file['path'], one_file['date'])		
+										current_page = await append_a_new_image(pdfDoc, one_file['path'], one_file['date'])		
 									}catch(error){
 										console.error({error})
 									}
@@ -250,7 +254,7 @@ async function append_text(pdfDoc, page, text, text_size){
 }
 
 
-async function append_a_new_image(year, pdfDoc, imagePath, caption, current_page, y_position_from_current_page) {
+async function append_a_new_image(pdfDoc, imagePath, caption, current_page, y_position_from_current_page) {
 	
 	// New image
 	const new_page = await add_page_of_image(pdfDoc, imagePath, caption, current_page, y_position_from_current_page)
@@ -263,11 +267,12 @@ async function save_pdf(pdfDoc, year){
 
 	// Save the PDF to variable
 	const pdfBytes = await pdfDoc.save();
+	const album_name = 'album_' + year + '.pdf'
 
 	//output it if it's last
-	writeFileSync('album_' + year + '.pdf', pdfBytes);
+	writeFileSync(album_name, pdfBytes);
 
-	console.log('saved.')
+	console.log('saved as '+album_name+'.')
 }
 
 function extension(imagePath){
@@ -291,7 +296,7 @@ async function add_page_of_image(pdfDoc, imagePath, caption, current_page, y_pos
 
 	// Retrieve the image and embed it
 	const imageBytes = await processImage(imagePath, width, height)
-	const image = extension(imagePath) === 'png' ? await pdfDoc.embedPng(imageBytes) : await pdfDoc.embedJpg(imageBytes);
+	const image = await pdfDoc.embedPng(imageBytes) 
 	current_page.drawImage(image, { x: x_position, y: y_position, width, height });
 
 	// Add to this page the date of the file
@@ -332,39 +337,26 @@ function get_final_image_dimensions(image_path, image_size){
 }
 
 async function processImage(imagePath, width, height) {
+    const blend = 'dest-in'
 	const mask = Buffer.from(
-	  `<svg><rect fill="red" x="0" y="0" width="${width}" height="${height}" rx="${ROUNDED_CORNER}" ry="${ROUNDED_CORNER}" /></svg>`
+	  `<svg><rect x="0" y="0" width="${width}" height="${height}" rx="${ROUNDED_CORNER}" ry="${ROUNDED_CORNER}" /></svg>`
 	);
 
     const imageBuffer = readFileSync(imagePath);
 
     // Get image metadata to determine its format
     const metadata = await sharp(imageBuffer).rotate().metadata();
-    const blend = 'dest-in'
 
-    // Process the image based on its format (JPG or PNG)
-    let processedImage;
-    if (metadata.format === 'jpeg' || metadata.format === 'jpg') {
-        processedImage = await sharp(imageBuffer)
+    // Process the image into png before applying mask
+    const processedImage = await sharp(imageBuffer)
             .rotate() // Corrects the orientation based on EXIF data
             .resize({ width, height }) // Resize the image
-            .jpeg({ quality: 100 }) // Adjust the quality for JPG
+            .toFormat('png')
             .composite([{
 			    input: mask,
 			    blend: blend
 			}])
             .toBuffer();
-    } else if (metadata.format === 'png') {
-        processedImage = await sharp(imageBuffer)
-            .rotate() // Corrects the orientation based on EXIF data
-            .resize({ width, height}) // Resize the image
-            .png({ compressionLevel: 1 }) // Adjust compression for PNG
-            .composite([{
-			    input: mask,
-			    blend: blend
-			}])
-            .toBuffer();
-    }
 
     return processedImage;
 }
