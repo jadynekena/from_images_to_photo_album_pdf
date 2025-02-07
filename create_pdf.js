@@ -354,7 +354,6 @@ async function processImage(imagePath, width, height) {
             .rotate() // Corrects the orientation based on EXIF data
             .resize({ width, height }) // Resize the image
             .toFormat('png')
-            .png({ compressionLevel: 1 }) // Adjust compression for PNG
             .composite([{
 			    input: mask,
 			    blend: blend
